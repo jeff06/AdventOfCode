@@ -62,7 +62,7 @@ namespace AdventOfCode._2021
                 }
             }
 
-            return 0;
+            return 0; 
         }
     }
 }
