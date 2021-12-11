@@ -42,45 +42,59 @@ namespace AdventOfCode._2021
         public int Day1_2()
         {
             List<string> lines = System.IO.File.ReadAllLines(@"2021/Day1.txt").ToList();
-            List<int> lastThree = new List<int>();
-            int lastMeasurement = -1;
-            int count = 0;
+            int[] window = {-1, -1, -1, -1};
+            int currentElementInArray = 0;
+            int count = -1;
+            int currentValue = 0;
+            int previousDepth = -1;
             for (int i = 0; i < lines.Count; i++)
             {
                 int depth = Convert.ToInt32(lines[i]);
-                if (lastThree.Count < 3)
+                for (int j = 0; j < window.Length; j++)
                 {
-                    lastThree.Add(depth);
+                    if (window[j] == -1)
+                    {
+                        window[j] = depth;
+                        currentElementInArray++;
+                        break;
+                    }
                 }
 
-                if (lastThree.Count == 3)
+                if (currentElementInArray == 3)
                 {
-                    int currentMeasurement = lastThree.Sum();
-                    if (lastMeasurement == -1)
+                    int indexFirstElementNotFiller = -1;
+                    for (int j = 0; j < window.Length; j++)
                     {
-                        lastMeasurement = currentMeasurement;
-                        lastThree.RemoveAt(0);
+                        if (window[j] != -1)
+                        {
+                            if (indexFirstElementNotFiller == -1)
+                            {
+                                indexFirstElementNotFiller = j;
+                            }
+                            
+                            currentValue += window[j];
+                        }
+                    }
+                    
+                    //Remove first element that is not -1;
+                    window[indexFirstElementNotFiller] = -1;
+                    currentElementInArray--;
+
+                    if (previousDepth == -1)
+                    {
                         Console.WriteLine("No previous");
-                        continue;
+                    }
+                    else if (currentValue > previousDepth)
+                    {
+                        Console.WriteLine("Up");
+                        count++;
                     }
                     else
                     {
-                        if(currentMeasurement == lastMeasurement)
-                        {
-                            Console.WriteLine("No Change");
-                        }
-                        else if (currentMeasurement > lastMeasurement)
-                        {
-                            count++;
-                            lastMeasurement = currentMeasurement;
-                            Console.WriteLine("Up");
-                        }
-                        else
-                        {
-                            Console.WriteLine("Down");
-                        }
-                        lastThree.RemoveAt(0);
+                        Console.WriteLine("Down");
                     }
+
+                    previousDepth = currentValue;
                 }
             }
 
