@@ -230,7 +230,7 @@ namespace AdventOfCode._2021
 
             oxygen = reportValuesOxy.First();
 
-            arr = new [] {"", "", "", "", "", "", "", "", "", "", "", "",};
+            arr = new[] {"", "", "", "", "", "", "", "", "", "", "", "",};
             charToSkip = 0;
             InitArray(ref arr, reportValuesCo2);
 
@@ -251,7 +251,7 @@ namespace AdventOfCode._2021
                 reportValuesCo2 = reportValuesCo2.Where(x => x.StartsWith(co2)).ToList();
                 charToSkip++;
 
-                arr = new [] {"", "", "", "", "", "", "", "", "", "", "", "",};
+                arr = new[] {"", "", "", "", "", "", "", "", "", "", "", "",};
 
                 InitArray(ref arr, reportValuesCo2);
             }
@@ -738,7 +738,7 @@ namespace AdventOfCode._2021
         {
             return CalculateNbFishBasedOnNbDay(80);
         }
-        
+
         public double Day6_2()
         {
             return CalculateNbFishBasedOnNbDay(256);
@@ -747,12 +747,11 @@ namespace AdventOfCode._2021
         private double CalculateNbFishBasedOnNbDay(int numberOfDay)
         {
             int maxFishCycle = 8;
-            double totalFish = 0;
             List<string> fileContent = Helper.GetFileContent("2021/Day6.txt");
             List<string> fishFromFile = fileContent[0].Split(",").OrderBy(x => x).ToList();
             List<LanternFish> lstFish = new List<LanternFish>();
 
-            for (int i = 0; i < maxFishCycle + 1; i++)
+            for (var i = 0; i < maxFishCycle + 1; i++)
             {
                 LanternFish fish = new LanternFish
                 {
@@ -767,17 +766,12 @@ namespace AdventOfCode._2021
                 v.NbFish = fishFromFile.Count(x => x == v.NbDay.ToString());
             }
 
-            for (int i = 0; i < numberOfDay; i++)
+            for (var i = 0; i < numberOfDay; i++)
             {
                 lstFish = SpawnFish(lstFish, maxFishCycle);
             }
 
-            foreach (var v in lstFish)
-            {
-                totalFish += v.NbFish;
-            }
-
-            return totalFish;
+            return lstFish.Sum(v => v.NbFish);
         }
 
         private List<LanternFish> SpawnFish(List<LanternFish> lstFish, int maxFishCycle)
@@ -785,7 +779,7 @@ namespace AdventOfCode._2021
             List<LanternFish> lstFishBackup = new List<LanternFish>();
             for (int i = 0; i <= maxFishCycle; i++)
             {
-                lstFishBackup.Add(new LanternFish(){NbDay = i});
+                lstFishBackup.Add(new LanternFish() {NbDay = i});
             }
 
             for (int i = maxFishCycle; i >= 0; i--)
@@ -810,7 +804,68 @@ namespace AdventOfCode._2021
 
         #region Day 7
 
-        
+        public int Day7_1()
+        {
+            List<string> fileContent = Helper.GetFileContent("2021/Day7.txt");
+            List<int> crabPosition = fileContent[0].Split(",").Select(int.Parse).OrderBy(x => x).ToList();
+            List<int> alreadyCheckPosition = new List<int>();
+            int leastFuel = int.MaxValue;
+
+            foreach (var v in crabPosition)
+            {
+                if (!alreadyCheckPosition.Contains(v))
+                {
+                    alreadyCheckPosition.Add(v);
+                    var currentRun = CalculateFuelForCurrentPosition(v, crabPosition);
+                    if (leastFuel > currentRun)
+                    {
+                        leastFuel = currentRun;
+                    }
+                }
+            }
+
+            return leastFuel;
+        }
+
+        public int Day7_2()
+        {
+            List<string> fileContent = Helper.GetFileContent("2021/Day7.txt");
+            List<int> crabPosition = fileContent[0].Split(",").Select(int.Parse).OrderByDescending(x => x).ToList();
+            List<int> alreadyCheckPosition = new List<int>();
+            int leastFuel = int.MaxValue;
+            int maxPosition = crabPosition.Max();
+            int minPosition = crabPosition.Min();
+
+            for (int i = minPosition; i <= maxPosition; i++)
+            {
+                int fuelCost = 0;
+                foreach (var currentCrabPosition in crabPosition)
+                {
+                    int positionToReach = Math.Abs(i - currentCrabPosition);
+
+                    for (int j = 1; j <= positionToReach; j++)
+                    {
+                        fuelCost += j;
+                    }
+                }
+
+                if (leastFuel > fuelCost && fuelCost != 0)
+                {
+                    leastFuel = fuelCost;
+                }
+            }
+
+            return leastFuel;
+        }
+
+        private int CalculateFuelForCurrentPosition(int currentCrabPosition, List<int> crabPosition)
+        {
+            return crabPosition.Sum(v => Math.Abs(currentCrabPosition - v));
+        }
+
+        #endregion
+
+        #region Day 8
 
         #endregion
     }
